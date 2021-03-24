@@ -1,19 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Image, View, ScrollView, Text } from 'react-native';
+import { io } from 'socket.io-client';
+import axios from 'axios';
 
-const logo = {
-    uri: 'https://reactnative.dev/img/tiny_logo.png',
-    width: 64,
-    height: 64
-};
+const socket = io('http://172.20.10.2:3000');
 
 const HomeScreen = () => {
+    const [text, setText] = useState('');
+    useEffect(() => {
+        socket.on("connect", () => {
+            socket.on("message", (data) => {
+                setText(data)
+            })
+        })
+    })
     return (
         <View style={styles.container}>
             <View style={{ flex: 1 }} />
             <View style={{ flex: 6, backgroundColor: "blue" }}>
                 <ScrollView>
-                    <Text style={{ fontSize: 96 }}>Scroll me plz</Text>
+                    <Text>{text}</Text>
+                    {/* <Text style={{ fontSize: 96 }}>Scroll me plz</Text>
                     <Image source={logo} />
                     <Image source={logo} />
                     <Image source={logo} />
@@ -43,7 +50,7 @@ const HomeScreen = () => {
                     <Image source={logo} />
                     <Image source={logo} />
                     <Image source={logo} />
-                    <Text style={{ fontSize: 80 }}>React Native</Text>
+                    <Text style={{ fontSize: 80 }}>React Native</Text> */}
                 </ScrollView>
             </View>
         </View>

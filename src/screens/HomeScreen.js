@@ -4,85 +4,45 @@ import { io } from 'socket.io-client';
 import axios from 'axios';
 import { FlatList } from 'react-native-gesture-handler';
 
+const socket = io('http://172.20.10.2:3000');
 
-// const socket = io('http://172.20.10.2:3000');
 let ignore = false;
 function HomeScreen() {
-    const [data, setData] = useState({});
+    const [data, setData] = useState({ markets: [] });
     async function getMarket() {
-        const result = await axios.get('http://192.168.35.164:3000/searchMarketCode');
+        const result = await axios.get('http://172.20.10.2:3000/searchMarketCode');
         setData(result.data)
     }
-    if(!ignore) {
+    if (!ignore) {
         getMarket();
         ignore = true;
     }
 
-
-
-    
-    // useEffect(() => {
-    //     let ignore = false;
-        
-    //     async function fetchData() {
-    //         const result = await axios.get('http://192.168.35.164:3000/searchMarketCode');
-    //         const coinList = [];
-    //         for(let value of result.data){
-    //             let temp = {}
-    //             temp[value] = 0;
-    //             coinList.push(temp);
-    //         }
-    //         if(!ignore) setData(coinList);
-    //     }
-
-    //     fetchData();
-    //     return () => { ignore = true; }
-    // }, [])
     // useEffect(() => {
     //     socket.on("connect", () => {
-    //         socket.on("message", (data) => {
-    //             setText(data)
+    //         socket.on("message", (res) => {
+    //             setData(res);
+    //             console.log(res);
     //         })
     //     })
     // })
+    const Item = ({ title }) => (
+        <View>
+            <Text>{title}</Text>
+        </View>
+    );
+    const renderItem = ({ item }) => (
+        <Item title={Object.keys(item)[0]} />
+    )
     return (
         <View style={styles.container}>
             <View style={{ flex: 1 }} />
             <View style={{ flex: 6, backgroundColor: "blue" }}>
-                <ScrollView>
-                    <Text>{data.krw}</Text>
-                    {/* <Text style={{ fontSize: 96 }}>Scroll me plz</Text>
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Text style={{ fontSize: 96 }}>If you like</Text>
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Text style={{ fontSize: 96 }}>Scrolling down</Text>
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Text style={{ fontSize: 96 }}>What's the best</Text>
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Text style={{ fontSize: 96 }}>Framework around?</Text>
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Image source={logo} />
-                    <Text style={{ fontSize: 80 }}>React Native</Text> */}
-                </ScrollView>
+                <FlatList
+                    data={data}
+                    renderItem={renderItem}
+                    keyExtractor={item => Object.keys(item)[0]}
+                />
             </View>
         </View>
     );

@@ -1,39 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, View, ScrollView, Text } from 'react-native';
+import { StyleSheet, Image, View, FlatList, Text } from 'react-native';
 import { io } from 'socket.io-client';
 import axios from 'axios';
-import { FlatList } from 'react-native-gesture-handler';
 
 const socket = io('http://172.20.10.2:3000');
 
+const Item = ({ title }) => (
+    <View style={{ margin: 10 }}>
+        <Text>CODE : {title.code}</Text>
+        <Text>PRICE : {title.price}</Text>
+    </View>
+);
+
 let ignore = false;
 function HomeScreen() {
-    const [data, setData] = useState({ markets: [] });
-    async function getMarket() {
-        const result = await axios.get('http://172.20.10.2:3000/searchMarketCode');
-        setData(result.data)
-    }
-    if (!ignore) {
-        getMarket();
-        ignore = true;
-    }
+    const [data, setData] = useState([]);
 
-    // useEffect(() => {
-    //     socket.on("connect", () => {
-    //         socket.on("message", (res) => {
-    //             setData(res);
-    //             console.log(res);
-    //         })
-    //     })
-    // })
-    const Item = ({ title }) => (
-        <View>
-            <Text>{title}</Text>
-        </View>
-    );
+    useEffect(() => {
+        async function fetchData() {
+            const result = await axios.get('http://172.20.10.2:3000/searchMarketCode')
+            setData(result.data);
+        }
+        if (!ignore) {
+            fetchData();
+            ignore = true;
+        }
+    }, [])
+
     const renderItem = ({ item }) => (
-        <Item title={Object.keys(item)[0]} />
-    )
+        <Item title={item} />
+    );
+
     return (
         <View style={styles.container}>
             <View style={{ flex: 1 }} />
@@ -41,7 +38,7 @@ function HomeScreen() {
                 <FlatList
                     data={data}
                     renderItem={renderItem}
-                    keyExtractor={item => Object.keys(item)[0]}
+                    keyExtractor={item => item.code}
                 />
             </View>
         </View>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, View, FlatList, Text } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, View, FlatList, Text } from 'react-native';
 import { io } from 'socket.io-client';
 import axios from 'axios';
 
@@ -12,20 +12,39 @@ const Item = ({ title }) => (
     </View>
 );
 
-let ignore = false;
 function HomeScreen() {
-    const [data, setData] = useState([]);
-
-    useEffect(() => {
+    const [data, setData] = useState(() => {
         async function fetchData() {
-            const result = await axios.get('http://172.20.10.2:3000/searchMarketCode')
+            const result = await axios.get('http://172.20.10.2:3000/searchMarketCode');
             setData(result.data);
         }
-        if (!ignore) {
-            fetchData();
-            ignore = true;
-        }
-    }, [])
+        fetchData();
+    });
+    const dRef = useRef();
+
+    useEffect(() => {
+        dRef.current = data;
+    })
+
+    useEffect(() => {
+        socket.on("connect", () => {
+            console.log('socket 연결');
+            socket.on("message", (res) => {
+                let temp = dRef.current.filter(obj => obj.code !== res.code);
+                temp.push({ code: res.code, price: res.price })
+                temp.sort(function (a, b) {
+                    if (a.code < b.code) {
+                        return -1;
+                    }
+                    if (a.code > b.code) {
+                        return 1;
+                    }
+                    return 0;
+                })
+                setData(temp);
+            })
+        })
+    })
 
     const renderItem = ({ item }) => (
         <Item title={item} />

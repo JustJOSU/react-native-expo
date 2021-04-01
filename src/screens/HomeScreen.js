@@ -29,7 +29,8 @@ function HomeScreen() {
     useEffect(() => {
         socket.on("connect", () => {
             console.log('socket 연결');
-            socket.on("message", (res) => {
+            socket.on("message", (data) => {
+                let res = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(data)));
                 let temp = dRef.current.filter(obj => obj.code !== res.code);
                 temp.push({ code: res.code, price: res.price })
                 temp.sort(function (a, b) {
@@ -43,6 +44,13 @@ function HomeScreen() {
                 })
                 setData(temp);
             })
+            setTimeout(() => {
+                socket.disconnect();
+                console.log('socket disconnect');
+            }, 1000);
+        })
+        socket.on("disconnect", () => {
+            socket.open();
         })
     })
 

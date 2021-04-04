@@ -1,13 +1,20 @@
 import 'react-native-gesture-handler';
 
 import React from 'react';
-import { createStore } from 'redux';
-import rootReducer from './src/reducers/index';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from './src/Reducer';
 import { Provider } from 'react-redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import logger from 'redux-logger';
+import ReduxThunk from 'redux-thunk';
+import createSagaMiddleWare from 'redux-saga';
 
 import Tabs from './src/TabConfig';
 
-const store = createStore(rootReducer);
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(applyMiddleware(ReduxThunk, logger))
+);
 
 export default function App() {
   return (
@@ -16,12 +23,3 @@ export default function App() {
     </Provider>
   );
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });

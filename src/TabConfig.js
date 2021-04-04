@@ -4,6 +4,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import Screens from './screens/index';
 
+//test
+import CounterContainer from './ReduxTest/containers/CounterContainer';
+import PostListContainer from './ReduxTest/containers/PostListContainer';
+
 const Tab = createBottomTabNavigator();
 
 const Tabs = () => {
@@ -33,9 +37,11 @@ const Tabs = () => {
                     inactiveTintColor: 'gray',
                 }}
             >
+                <Tab.Screen name="Home" component={Screens.TestScreen} />
+                {/* <Tab.Screen name="Home" component={CounterContainer} />
                 <Tab.Screen name="Home" component={Screens.HomeScreen} />
                 <Tab.Screen name="PortPolio" component={Screens.PortPolioScreen} />
-                <Tab.Screen name="Settings" component={Screens.SettingsScreen} />
+                <Tab.Screen name="Settings" component={Screens.SettingsScreen} /> */}
             </Tab.Navigator>
         </NavigationContainer>
     )

@@ -5,7 +5,7 @@ import CoinList from '../Components/CoinList';
 import { getMarketCoins } from '../Reducer/coinReducer';
 
 function TestScreen() {
-    const { data, loading, error } = useSelector(state => state.coinReducer.coins);
+    const { data, loading, error } = useSelector(state => state.coinReducer.markets);
     const dispatch = useDispatch();
 
     useEffect(() => {

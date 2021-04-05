@@ -1,34 +1,50 @@
-export const createPromisThunk = (type, promiseCreater) => {
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
+import { call, put } from 'redux-saga/effects';
+import { buffers, eventChannel, END } from 'redux-saga';
+import { v4 as uuidv4 } from 'uuid';
+import encoding from 'text-encoding';
+
+export const createPromisSaga = (type, promiseCreator) => {
     const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
-    return param => async dispatch => {
-        dispatch({ type, param });
+    return function* saga(action) {
         try {
-            const payload = await promiseCreater(param);
-            dispatch({ type: SUCCESS, payload });
+            const payload = yield call(promiseCreator, action.payload);
+            yield put({ type: SUCCESS, payload });
         } catch (e) {
-            dispatch({ type: ERROR, payload: e, error: true });
+            yield put({ type: ERROR, error: true, payload: e });
         }
     };
-};
+}
 
+export const createConnectSocketThunk = (type, connectType) => {
+    const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
+    return (action = {}) => (dispatch, getState) => {
+        const client = new W3CWebSocket("wss://api.upbit.com/websocket/v1");
+        client.binaryType = "arraybuffer";
+
+        client.onopen = () => {
+            client.send(
+                JSON.stringify([
+                    { ticket: uuidv4() },
+                    { type: connectType, codes: action.payload }
+                ])
+            );
+        };
+        client.onmessage = (response) => {
+            const encode = new encoding.TextDecoder('utf-8');
+            const textArray = new Uint8Array(response.data);
+            const data = JSON.parse(encode.decode(textArray));
+            const state = getState();
+            console.log(state);
+        }
+    };
+}
 export const reducerUtils = {
-    initial: (initialData = null) => ({
-        loading: false,
-        data: initialData,
-        error: null
-    }),
-    loading: (prevState = null) => ({
-        loading: true,
-        data: prevState,
-        error: null
-    }),
     success: payload => ({
-        loading: false,
         data: payload,
         error: null
     }),
     error: error => ({
-        loading: false,
         data: null,
         error: error
     })
@@ -38,11 +54,6 @@ export const handleAsyncActions = (type, key) => {
     const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
     return (state, action) => {
         switch (action.type) {
-            case type:
-                return {
-                    ...state,
-                    [key]: reducerUtils.loading()
-                };
             case SUCCESS:
                 return {
                     ...state,

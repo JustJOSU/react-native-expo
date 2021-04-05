@@ -1,22 +1,33 @@
-import React from 'react';
-import { View, Text, FlatList, Button, SafeAreaView, StatusBar } from 'react-native';
-
-const Item = ({ title }) => (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>{title}</Text>
-    </View>
-);
+import React, { useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 
 const CoinList = ({ coins }) => {
+    const [market, setMarket] = useState(coins.krw);
+
+    const Item = ({ title }) => (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>{title}</Text>
+        </View>
+    );
     const renderItem = ({ item }) => (
         <Item title={item.market} />
     );
+    const handleEvent = (select) => {
+        setMarket(coins[select]);
+    }
     return (
         <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight || 0 }}>
-            <Button title="test" />
-            <Button title="test2" />
+            <TouchableOpacity onPress={() => handleEvent('krw')}>
+                <Text>KRW</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleEvent('btc')} >
+                <Text>BTC</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleEvent('usdt')} >
+                <Text>USDT</Text>
+            </TouchableOpacity>
             <FlatList
-                data={coins.krw}
+                data={market}
                 renderItem={renderItem}
                 keyExtractor={item => item.market}
             />

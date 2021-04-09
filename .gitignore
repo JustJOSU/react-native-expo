@@ -9,8 +9,5 @@ npm-debug.*
 *.orig.*
 web-build/
 
-# Test files
-src/ReduxTest/**
-
 # macOS
 .DS_Store

@@ -2,23 +2,16 @@ import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import CoinList from '../Components/CoinList';
-import { getMarketCoins } from '../Reducer/coinReducer';
+import { getMarketCoins, connectTickerSocketThunk, startInit } from '../Reducer/coinReducer';
 
 function TestScreen() {
-    const { data, loading, error } = useSelector(state => state.coinReducer.markets);
+    const { data, error } = useSelector(state => state.coinReducer.markets);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getMarketCoins());
+        dispatch(startInit());
     }, [dispatch])
 
-    if (loading) {
-        return (
-            <View>
-                <Text>로딩중...</Text>
-            </View>
-        )
-    }
     if (error) {
         return (
             <View>

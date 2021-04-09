@@ -4,10 +4,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import Screens from './screens/index';
 
-//test
-import CounterContainer from './ReduxTest/containers/CounterContainer';
-import PostListContainer from './ReduxTest/containers/PostListContainer';
-
 const Tab = createBottomTabNavigator();
 
 const Tabs = () => {

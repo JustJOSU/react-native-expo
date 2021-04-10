@@ -50,7 +50,7 @@ const connectSocket = (socket, connectType, action, buffer) => {
     }, buffer || buffer.none());
 };
 
-export const createConnectSocketSaga = (type, connectType) => {
+export const createConnectSocketSaga = (type, connectType, dataMaker) => {
     const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
     return function* (action = {}) {
         const client = yield call(createSocket);
@@ -78,8 +78,8 @@ export const createConnectSocketSaga = (type, connectType) => {
                             obj[data.code] = data.trade_price;
                         }
                     });
-                    console.log(Object.keys(obj).length);
-                    yield put({ type: SUCCESS, payload: obj });
+                    
+                    yield put({ type: SUCCESS, payload: dataMaker(obj, state) });
                 }
                 yield delay(500);
             } catch (e) {
@@ -103,8 +103,6 @@ export const reducerUtils = {
 export const handleAsyncActions = (type, key) => {
     const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
     return (state, action) => {
-        console.log(key);
-        console.log(action.payload);
         switch (action.type) {
             case SUCCESS:
                 return {

@@ -1,13 +1,20 @@
 const tickerListUtils = {
     update: (data, state) => {
-        if (!state) {
+        if (!state.coinReducer.tickerList.data) {
             return data;
         }
-
-        const prevPrice = state.tickerList.data;
-        return {
-            ...prevPrice,
-
+        const newState = {
+            ...state.coinReducer.tickerList.data
         }
+        const keys = Object.keys(data);
+
+        keys.forEach(key => {
+            newState[key] = data[key];
+        })
+        return newState;
     }
+}
+
+export {
+    tickerListUtils
 }

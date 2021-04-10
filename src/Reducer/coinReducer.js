@@ -6,6 +6,7 @@ import {
     createConnectSocketSaga
 } from '../lib/asyncUtils';
 import { put, select, takeEvery } from 'redux-saga/effects';
+import { tickerListUtils } from '../lib/utils';
 
 // 코인 마켓 코드 조회 action type
 const GET_MARKET_COINS = "coin/GET_MARKET_COINS";
@@ -23,7 +24,7 @@ export const connectTickerSocket = () => ({ type: CONNECT_TICKER_SOCKET });
 export const startInit = () => ({ type: START_INIT });
 
 const getMarketCoinsSaga = createPromisSaga(GET_MARKET_COINS, coinApi.getMarketCodes);
-const connectTickerSocketSaga = createConnectSocketSaga(CONNECT_TICKER_SOCKET, "ticker");
+const connectTickerSocketSaga = createConnectSocketSaga(CONNECT_TICKER_SOCKET, "ticker", tickerListUtils.update);
 
 function* startInitSaga() {
     yield getMarketCoinsSaga();

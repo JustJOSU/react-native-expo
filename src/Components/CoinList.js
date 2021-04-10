@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 
 const CoinList = ({ coins }) => {
-    const [market, setMarket] = useState(coins.krw);
+    const [market, setMarket] = useState(Object.keys(coins.krw));
 
     const Item = ({ title }) => (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -10,7 +10,7 @@ const CoinList = ({ coins }) => {
         </View>
     );
     const renderItem = ({ item }) => (
-        <Item title={item.market} />
+        <Item title={item} />
     );
     const handleEvent = (select) => {
         setMarket(coins[select]);
@@ -29,7 +29,7 @@ const CoinList = ({ coins }) => {
             <FlatList
                 data={market}
                 renderItem={renderItem}
-                keyExtractor={item => item.market}
+                keyExtractor={(item, index) => index.toString()}
             />
         </SafeAreaView>
     )

@@ -3,7 +3,6 @@ import {
     reducerUtils,
     handleAsyncActions,
     createPromisSaga,
-    createConnectSocketThunk,
     createConnectSocketSaga
 } from '../lib/asyncUtils';
 import { put, select, takeEvery } from 'redux-saga/effects';
@@ -26,15 +25,11 @@ export const startInit = () => ({ type: START_INIT });
 const getMarketCoinsSaga = createPromisSaga(GET_MARKET_COINS, coinApi.getMarketCodes);
 const connectTickerSocketSaga = createConnectSocketSaga(CONNECT_TICKER_SOCKET, "ticker");
 
-const connectTickerSocketThunk = createConnectSocketThunk(CONNECT_TICKER_SOCKET, "trade");
-
 function* startInitSaga() {
     yield getMarketCoinsSaga();
     const state = yield select();
-    const marketNames = state.coinReducer.markets.data.krw.map(value => value.market);
-    console.dir(marketNames);
+    const marketNames = Object.keys(state.coinReducer.markets.data.krw);
 
-    // yield put(connectTickerSocketThunk({ payload: marketNames }));
     yield connectTickerSocketSaga({ payload: marketNames });
 }
 export function* coinSaga() {

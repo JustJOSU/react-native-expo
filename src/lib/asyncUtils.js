@@ -3,10 +3,12 @@ import { call, delay, flush, put, select } from 'redux-saga/effects';
 import { buffers, eventChannel, END } from 'redux-saga';
 import { v4 as uuidv4 } from 'uuid';
 import encoding from 'text-encoding';
+import { getMarketCoins, connectTickerSocket } from '../Reducer/coinReducer'
 
 export const createPromisSaga = (type, promiseCreator) => {
     const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
     return function* saga(action = {}) {
+        // yield put(getMarketCoins());
         try {
             const payload = yield call(promiseCreator, action.payload);
             yield put({ type: SUCCESS, payload });
@@ -29,7 +31,7 @@ const connectSocket = (socket, connectType, action, buffer) => {
         socket.onopen = () => {
             socket.send(
                 JSON.stringify([
-                    { ticket: uuidv4() },
+                    { ticket: 'test' },
                     { type: connectType, codes: action.payload }
                 ])
             );
@@ -53,6 +55,7 @@ const connectSocket = (socket, connectType, action, buffer) => {
 export const createConnectSocketSaga = (type, connectType, dataMaker) => {
     const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
     return function* (action = {}) {
+        yield put(connectTickerSocket());
         const client = yield call(createSocket);
         const clientChannel = yield call(
             connectSocket,
@@ -61,9 +64,10 @@ export const createConnectSocketSaga = (type, connectType, dataMaker) => {
             action,
             buffers.expanding(500)
         );
-        setTimeout(() => {
-            client.close();
-        }, 3000);
+
+        // setTimeout(() => {
+        //     client.close();
+        // }, 3000);
         while (true) {
             try {
                 const datas = yield flush(clientChannel);
@@ -78,7 +82,6 @@ export const createConnectSocketSaga = (type, connectType, dataMaker) => {
                             obj[data.code] = data.trade_price;
                         }
                     });
-                    
                     yield put({ type: SUCCESS, payload: dataMaker(obj, state) });
                 }
                 yield delay(500);
@@ -90,11 +93,23 @@ export const createConnectSocketSaga = (type, connectType, dataMaker) => {
 };
 
 export const reducerUtils = {
+    initial: (initialData = null) => ({
+        loading: false,
+        data: initialData,
+        error: null
+    }),
+    loading: (prevState = null) => ({
+        loading: true,
+        data: prevState,
+        error: null
+    }),
     success: payload => ({
+        loading: false,
         data: payload,
         error: null
     }),
     error: error => ({
+        loading: false,
         data: null,
         error: error
     })
@@ -104,6 +119,11 @@ export const handleAsyncActions = (type, key) => {
     const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
     return (state, action) => {
         switch (action.type) {
+            case type:
+                return {
+                    ...state,
+                    [key]: reducerUtils.loading()
+                };
             case SUCCESS:
                 return {
                     ...state,

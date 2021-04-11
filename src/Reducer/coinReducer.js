@@ -39,21 +39,17 @@ export function* coinSaga() {
 }
 
 const initilaState = {
-    markets: {
-        error: null,
-        data: null
-    },
-    tickerList: {
-        error: null,
-        data: null
-    }
+    markets: reducerUtils.initial(),
+    tickerList: reducerUtils.initial()
 };
 
 export default function coinReducer(state = initilaState, action) {
     switch (action.type) {
+        case GET_MARKET_COINS:
         case GET_MARKET_COINS_SUCCESS:
         case GET_MARKET_COINS_ERROR:
             return handleAsyncActions(GET_MARKET_COINS, 'markets')(state, action);
+        case CONNECT_TICKER_SOCKET:
         case CONNECT_TICKER_SOCKET_SUCCESS:
         case CONNECT_TICKER_SOCKET_ERROR:
             return handleAsyncActions(CONNECT_TICKER_SOCKET, 'tickerList')(state, action);

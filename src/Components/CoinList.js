@@ -3,14 +3,21 @@ import { View, Text, FlatList, TouchableOpacity, SafeAreaView, StatusBar } from 
 
 const CoinList = ({ coins, prices }) => {
     const [market, setMarket] = useState(Object.keys(coins.krw));
-    
-    const Item = ({ title }) => (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>{title}</Text>
+    const [price, setPrice] = useState(Object.entries(prices));
+    const [prevPrice, setPrevState] = useState();
+
+    useEffect(() => {
+        setPrevState(price);
+        setPrice(Object.entries(prices));
+    }, [prices])
+
+    const Item = ({ item, index }) => (
+        <View style={{ borderWidth: 1, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>{`${item[0]} : ${item[1]}`}</Text>
         </View>
     );
-    const renderItem = ({ item }) => (
-        <Item title={item} />
+    const renderItem = ({ item, index }) => (
+        <Item item={item} index={index} />
     );
     const handleEvent = (select) => {
         setMarket(Object.keys(coins[select]));
@@ -27,7 +34,7 @@ const CoinList = ({ coins, prices }) => {
                 <Text>USDT</Text>
             </TouchableOpacity>
             <FlatList
-                data={market}
+                data={price}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => index.toString()}
             />

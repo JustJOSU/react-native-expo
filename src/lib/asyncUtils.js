@@ -7,8 +7,8 @@ import { getMarketCoins, connectTickerSocket } from '../Reducer/coinReducer'
 
 export const createPromisSaga = (type, promiseCreator) => {
     const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
-    return function* saga(action = {}) {
-        // yield put(getMarketCoins());
+    return function* (action = {}) {
+        yield put(getMarketCoins());
         try {
             const payload = yield call(promiseCreator, action.payload);
             yield put({ type: SUCCESS, payload });
@@ -27,6 +27,7 @@ const createSocket = () => {
 }
 
 const connectSocket = (socket, connectType, action, buffer) => {
+
     return eventChannel((emit) => {
         socket.onopen = () => {
             socket.send(
@@ -65,9 +66,6 @@ export const createConnectSocketSaga = (type, connectType, dataMaker) => {
             buffers.expanding(500)
         );
 
-        // setTimeout(() => {
-        //     client.close();
-        // }, 3000);
         while (true) {
             try {
                 const datas = yield flush(clientChannel);

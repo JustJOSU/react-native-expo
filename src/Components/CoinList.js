@@ -2,13 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 
 const CoinList = ({ coins, prices }) => {
-    const [market, setMarket] = useState(Object.keys(coins.krw));
-    const [price, setPrice] = useState(Object.entries(prices));
-    const [prevPrice, setPrevState] = useState();
-
+    const [price, setPrice] = useState(Object.entries(prices.krw));
+    const [select, setSelect] = useState('krw');
     useEffect(() => {
-        setPrevState(price);
-        setPrice(Object.entries(prices));
+        setPrice(Object.entries(prices[select]));
     }, [prices])
 
     const Item = ({ item, index }) => (
@@ -20,7 +17,7 @@ const CoinList = ({ coins, prices }) => {
         <Item item={item} index={index} />
     );
     const handleEvent = (select) => {
-        setMarket(Object.keys(coins[select]));
+        setSelect(select);
     }
     return (
         <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight || 0 }}>

@@ -29,12 +29,12 @@ const connectTickerSocketSaga = createConnectSocketSaga(CONNECT_TICKER_SOCKET, "
 function* startInitSaga() {
     yield getMarketCoinsSaga();
     const state = yield select();
-    const marketNames = Object.keys(state.coinReducer.markets.data.krw);
+    const marketNames = Object.keys(state.coinReducer.markets.data);
 
     yield connectTickerSocketSaga({ payload: marketNames });
 }
+
 export function* coinSaga() {
-    yield takeEvery(GET_MARKET_COINS, getMarketCoinsSaga);
     yield takeEvery(START_INIT, startInitSaga);
 }
 

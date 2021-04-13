@@ -14,7 +14,7 @@ function TestScreen() {
         dispatch(startInit());
     }, [dispatch])
 
-    if (tickerData.loading) {
+    if (marketsData.loading || tickerData.loading) {
         return (
             <View>
                 <Text>로딩중...</Text>

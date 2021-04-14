@@ -1,7 +1,7 @@
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { call, delay, flush, put, select } from 'redux-saga/effects';
 import { buffers, eventChannel, END } from 'redux-saga';
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 import encoding from 'text-encoding';
 import { getMarketCoins, connectTickerSocket } from '../Reducer/coinReducer'
 
@@ -65,7 +65,9 @@ export const createConnectSocketSaga = (type, connectType, dataMaker) => {
             action,
             buffers.expanding(500)
         );
-
+        // setTimeout(() => {
+        //     client.close();
+        // }, 3000)
         while (true) {
             try {
                 const datas = yield flush(clientChannel);
@@ -75,9 +77,9 @@ export const createConnectSocketSaga = (type, connectType, dataMaker) => {
                     datas.forEach((data) => {
                         if (obj[data.code]) {
                             obj[data.code] =
-                                obj[data.code].timestamp > data.timestamp ? obj[data.code] : data.trade_price;
+                                obj[data.code].timestamp > data.timestamp ? obj[data.code] : data;
                         } else {
-                            obj[data.code] = data.trade_price;
+                            obj[data.code] = data;
                         }
                     });
                     yield put({ type: SUCCESS, payload: dataMaker(obj, state) });

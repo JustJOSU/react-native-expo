@@ -6,23 +6,6 @@ export const coinApi = {
         const datas = response.data;
         const marketNames = {};
         datas.forEach(data => marketNames[data.market] = data.korean_name);
-        // const markets = {
-        //     krw: {},
-        //     btc: {},
-        //     usdt: {},
-        // }
-
-        // for (let coin of datas) {
-        //     if (coin.market[0] === 'B') {
-        //         markets.btc[coin.market] = coin.korean_name;
-        //     }
-        //     if (coin.market[0] === 'K') {
-        //         markets.krw[coin.market] = coin.korean_name;
-        //     }
-        //     if (coin.market[0] === 'U') {
-        //         markets.usdt[coin.market] = coin.korean_name;
-        //     }
-        // }
 
         return marketNames;
     }

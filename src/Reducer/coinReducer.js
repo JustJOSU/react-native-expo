@@ -17,11 +17,17 @@ const CONNECT_TICKER_SOCKET = "coin/CONNECT_TICKER_SOCKET";
 const CONNECT_TICKER_SOCKET_SUCCESS = "coin/CONNECT_TICKER_SOCKET_SUCCESS";
 const CONNECT_TICKER_SOCKET_ERROR = "coin/CONNECT_TICKER_SOCKET_ERROR";
 
+const CHANGE_MARKET = "coin/CHANGE_MARKET";
+const CHANGE_MARKET_SUCCESS = "coin/CHANGE_MARKET_SUCCESS";
+const CHANGE_MARKET_ERROR = "coin/CHANGE_MARKET_ERROR";
+
 const START_INIT = "coin/START_INIT";
 
+export const changeMarket = () => ({ type: CHANGE_MARKET });
 export const getMarketCoins = () => ({ type: GET_MARKET_COINS });
 export const connectTickerSocket = () => ({ type: CONNECT_TICKER_SOCKET });
 export const startInit = () => ({ type: START_INIT });
+
 
 const getMarketCoinsSaga = createPromisSaga(GET_MARKET_COINS, coinApi.getMarketCodes);
 const connectTickerSocketSaga = createConnectSocketSaga(CONNECT_TICKER_SOCKET, "ticker", tickerListUtils.update);
@@ -39,6 +45,7 @@ export function* coinSaga() {
 }
 
 const initilaState = {
+    selectMarket: 'KRW',
     markets: reducerUtils.initial(),
     tickerList: reducerUtils.initial()
 };
